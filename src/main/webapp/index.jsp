@@ -4,10 +4,10 @@
     <title>Java Enterprise (Topjava)</title>
 </head>
 <body>
-<h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
-<hr>
+<jsp:include page="WEB-INF/jsp/header.jsp"/>
 <ul>
     <li><a href="users">Users</a></li>
+    <li><a href="meals">Meals</a></li>
 </ul>
 </body>
 </html>

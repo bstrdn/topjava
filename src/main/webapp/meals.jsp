@@ -6,9 +6,9 @@
     <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
-
+<jsp:include page="WEB-INF/jsp/header.jsp"/>
 <h1>Meals</h1>
-<h4><a href="">Add meal</a></h4>
+<h4><a href="?action=create&id=0">Add meal</a></h4>
 <table>
     <tr>
         <th>Date</th>
@@ -18,14 +18,14 @@
         <th></th>
     </tr>
     <c:forEach var="meal" items="${list}">
-        <%--    <jsp:useBean id="meal" scope="request" class="ru.javawebinar.topjava.model.MealTo"/>--%>
+        <%--            <jsp:useBean id="meal" scope="request" class="ru.javawebinar.topjava.model.MealTo"/>--%>
         <jsp:useBean id="timeUtil" scope="request" class="ru.javawebinar.topjava.util.TimeUtil"/>
         <tr style="color:${meal.excess ? 'red' : 'green'}">
             <td>${timeUtil.getDateTimeFormatter(meal.dateTime)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td>Update</td>
-            <td>${meal.excess}Delete</td>
+            <td><a href="?action=update&id=${meal.id}">Update</a></td>
+            <td><a href="?action=delete&id=${meal.id}">Delete</a></td>
         </tr>
 
     </c:forEach>
