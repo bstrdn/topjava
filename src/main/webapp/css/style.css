@@ -1,7 +1,12 @@
-table {
+th, td, table {
     border-collapse: collapse;
     border: 1px solid grey;
 }
-th, td {
-    border: 1px solid grey;
+
+tr.red {
+    color: red;
+}
+
+tr.green {
+    color: green;
 }

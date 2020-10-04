@@ -5,16 +5,17 @@ import ru.javawebinar.topjava.model.Meal;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class MealsStorageMap implements MealsStorage {
+public class MapMealsStorage implements MealsStorage {
+    private final ConcurrentMap<Integer, Meal> storage = new ConcurrentHashMap<>();
+    public static int caloriesPerDay;
+    private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
-    private final Map<Integer, Meal> storage = new HashMap<>();
-    private static int count = 1;
-
-    public MealsStorageMap() {
+    public MapMealsStorage() {
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
@@ -22,13 +23,13 @@ public class MealsStorageMap implements MealsStorage {
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+        caloriesPerDay = 2000;
     }
 
     @Override
-    public void add(Meal meal) {
-        meal.setId(count);
-        storage.put(count, meal);
-        count++;
+    public Meal add(Meal meal) {
+        atomicInteger.incrementAndGet();
+        return storage.putIfAbsent(atomicInteger.get(), meal.getMealWithSetId(atomicInteger.get()));
     }
 
     @Override
@@ -37,8 +38,8 @@ public class MealsStorageMap implements MealsStorage {
     }
 
     @Override
-    public void update(Meal meal) {
-        storage.put(meal.getId(), meal);
+    public Meal update(Meal meal) {
+        return storage.replace(meal.getId(), meal);
     }
 
     @Override

@@ -8,7 +8,7 @@
 <body>
 <jsp:include page="WEB-INF/jsp/header.jsp"/>
 <h1>Meals</h1>
-<h4><a href="?action=create&id=0">Add meal</a></h4>
+<h4><a href="?action=create">Add meal</a></h4>
 <table>
     <tr>
         <th>Date</th>
@@ -18,16 +18,15 @@
         <th></th>
     </tr>
     <c:forEach var="meal" items="${list}">
-        <%--            <jsp:useBean id="meal" scope="request" class="ru.javawebinar.topjava.model.MealTo"/>--%>
-        <jsp:useBean id="timeUtil" scope="request" class="ru.javawebinar.topjava.util.TimeUtil"/>
-        <tr style="color:${meal.excess ? 'red' : 'green'}">
-            <td>${timeUtil.getDateTimeFormatter(meal.dateTime)}</td>
+        <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+        <jsp:useBean id="timeUtil" class="ru.javawebinar.topjava.util.TimeUtil"/>
+        <tr class="${meal.excess ? 'red' : 'green'}">
+            <td>${timeUtil.dtf.format(meal.dateTime)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td><a href="?action=update&id=${meal.id}">Update</a></td>
             <td><a href="?action=delete&id=${meal.id}">Delete</a></td>
         </tr>
-
     </c:forEach>
 </table>
 </body>

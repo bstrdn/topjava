@@ -1,31 +1,37 @@
 package ru.javawebinar.topjava.model;
 
-import ru.javawebinar.topjava.util.MealsUtil;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Meal {
+    private int id;
     private final LocalDateTime dateTime;
     private final String description;
     private final int calories;
-    private int id;
+
+    public Meal() {
+        this(LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 00)), "description", 0);
+    }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
+        this(0, dateTime, description, calories);
+    }
+
+    public Meal(int id, LocalDateTime dateTime, String description, int calories) {
+        this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-        id = MealsUtil.getMealCount();
-    }
-
-    public Meal(LocalDateTime dateTime, String description, int calories, int id) {
-        this(dateTime, description, calories);
-        this.id = id;
     }
 
     public int getId() {
         return id;
+    }
+
+    public Meal getMealWithSetId(int id) {
+        this.id = id;
+        return this;
     }
 
     public LocalDateTime getDateTime() {
@@ -46,9 +52,5 @@ public class Meal {
 
     public LocalTime getTime() {
         return dateTime.toLocalTime();
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }
