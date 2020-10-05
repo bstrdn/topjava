@@ -11,7 +11,7 @@ public class Meal {
     private final int calories;
 
     public Meal() {
-        this(LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 00)), "description", 0);
+        this(LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())), "", 0);
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
@@ -29,9 +29,8 @@ public class Meal {
         return id;
     }
 
-    public Meal getMealWithSetId(int id) {
+    public void setId(int id) {
         this.id = id;
-        return this;
     }
 
     public LocalDateTime getDateTime() {

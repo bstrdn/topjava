@@ -21,8 +21,8 @@ import static java.lang.Integer.parseInt;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
-    private MealsStorage mealsStorage;
     private static final Logger log = getLogger(MealServlet.class);
+    private MealsStorage mealsStorage;
 
     @Override
     public void init() {
@@ -32,14 +32,16 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-        String dataTime = req.getParameter("date");
-        String calories = req.getParameter("calories");
+        int id = Integer.parseInt(req.getParameter("id"));
+        LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("date"));
         String description = req.getParameter("description");
-        String id = req.getParameter("id");
-        if (id.equals("0")) {
-            mealsStorage.add(new Meal(LocalDateTime.parse(dataTime), description, parseInt(calories)));
+        int calories = Integer.parseInt(req.getParameter("calories"));
+        if (id == 0) {
+            log.debug("add new meal");
+            mealsStorage.add(new Meal(dateTime, description, calories));
         } else {
-            mealsStorage.update(new Meal(parseInt(id), LocalDateTime.parse(dataTime), description, parseInt(calories)));
+            log.debug("update meal with id:" + id);
+            mealsStorage.update(new Meal(id, dateTime, description, calories));
         }
         resp.sendRedirect("meals");
     }
@@ -67,12 +69,13 @@ public class MealServlet extends HttpServlet {
             }
         }
 
-        List<MealTo> listMeal = MealsUtil.filteredByStreams(mealsStorage.getList(), LocalTime.MIN, LocalTime.MAX, MapMealsStorage.caloriesPerDay);
+        List<MealTo> listMeal = MealsUtil.filteredByStreams(mealsStorage.getList(), LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY_TEMPORAL);
         req.setAttribute("list", listMeal);
+        log.debug("display list meals");
         req.getRequestDispatcher("meals.jsp").forward(req, resp);
     }
 
-    void forwardToEdit(Meal meal, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void forwardToEdit(Meal meal, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("meal", meal);
         req.getRequestDispatcher("mealsEdit.jsp").forward(req, resp);
     }

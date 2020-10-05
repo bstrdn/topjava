@@ -6,14 +6,13 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapMealsStorage implements MealsStorage {
-    private final ConcurrentMap<Integer, Meal> storage = new ConcurrentHashMap<>();
-    public static int caloriesPerDay;
-    private final AtomicInteger atomicInteger = new AtomicInteger(0);
+    private final Map<Integer, Meal> storage = new ConcurrentHashMap<>();
+    private final AtomicInteger count = new AtomicInteger(0);
 
     public MapMealsStorage() {
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
@@ -23,13 +22,16 @@ public class MapMealsStorage implements MealsStorage {
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
         add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
-        caloriesPerDay = 2000;
     }
 
     @Override
     public Meal add(Meal meal) {
-        atomicInteger.incrementAndGet();
-        return storage.putIfAbsent(atomicInteger.get(), meal.getMealWithSetId(atomicInteger.get()));
+        if (meal.getId() == 0) {
+            int id = count.incrementAndGet();
+            meal.setId(id);
+            storage.put(id, meal);
+        }
+        return meal;
     }
 
     @Override
@@ -39,7 +41,8 @@ public class MapMealsStorage implements MealsStorage {
 
     @Override
     public Meal update(Meal meal) {
-        return storage.replace(meal.getId(), meal);
+        storage.replace(meal.getId(), meal);
+        return meal;
     }
 
     @Override
