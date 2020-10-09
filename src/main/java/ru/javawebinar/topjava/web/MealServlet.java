@@ -40,7 +40,7 @@ public class MealServlet extends HttpServlet {
             log.debug("add new meal");
             mealsStorage.add(new Meal(dateTime, description, calories));
         } else {
-            log.debug("update meal with id:" + id);
+            log.debug("update meal with id: {}", id);
             mealsStorage.update(new Meal(id, dateTime, description, calories));
         }
         resp.sendRedirect("meals");
@@ -54,7 +54,7 @@ public class MealServlet extends HttpServlet {
             String paramId = req.getParameter("id");
             switch (req.getParameter("action")) {
                 case "delete":
-                    log.debug("action: delete meal with id: " + paramId);
+                    log.debug("action: delete meal with id: {}", paramId);
                     mealsStorage.delete(parseInt(paramId));
                     resp.sendRedirect("meals");
                     return;
@@ -63,7 +63,7 @@ public class MealServlet extends HttpServlet {
                     forwardToEdit(new Meal(), req, resp);
                     break;
                 case "update":
-                    log.debug("action: update meal with id: " + paramId);
+                    log.debug("action: update meal with id: {} ", paramId);
                     forwardToEdit(mealsStorage.get(parseInt(paramId)), req, resp);
                     break;
             }

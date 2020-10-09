@@ -30,8 +30,9 @@ public class MapMealsStorage implements MealsStorage {
             int id = count.incrementAndGet();
             meal.setId(id);
             storage.put(id, meal);
+            return meal;
         }
-        return meal;
+        return null;
     }
 
     @Override
@@ -41,8 +42,11 @@ public class MapMealsStorage implements MealsStorage {
 
     @Override
     public Meal update(Meal meal) {
-        storage.replace(meal.getId(), meal);
-        return meal;
+        if (storage.get(meal.getId()) != null) {
+            storage.replace(meal.getId(), meal);
+            return meal;
+        }
+        return null;
     }
 
     @Override
