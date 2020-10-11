@@ -14,6 +14,17 @@
         .excess {
             color: red;
         }
+
+        dt {
+            display: inline-block;
+            width: 50px;
+        }
+
+        dd {
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
@@ -21,8 +32,18 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <a href="meals?action=create">Add Meal</a>
-    <br><br>
+    <dl>
+        <form method="post" action="meals?action=filter">
+            <dt>Filter</dt>
+            <dd><input type="date" name="dateFrom" required></dd>
+            <dd><input type="date" name="dateTo" required></dd>
+            <dd><input type="time" name="timeFrom" required></dd>
+            <dd><input type="time" name="timeTo" required></dd>
+            <dd>
+                <button type="submit">Filter</button>
+            </dd>
+        </form>
+    </dl>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
@@ -49,6 +70,8 @@
             </tr>
         </c:forEach>
     </table>
+    <br>
+    <a href="meals?action=create">Add Meal</a>
 </section>
 </body>
 </html>

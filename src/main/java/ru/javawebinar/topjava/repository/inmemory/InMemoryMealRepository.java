@@ -5,8 +5,10 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.Collection;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @Repository
 public class InMemoryMealRepository implements MealRepository {
     private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+//    private final Map<Integer, List<Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -33,24 +36,38 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public boolean delete(int id) {
-        return repository.remove(id) != null;
+    public boolean delete(int id, int userId) {
+        Meal meal = repository.get(id);
+        if (meal != null && meal.getUserId() == userId) {
+            repository.remove(id);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Meal get(int id, int userId) {
         Meal meal = repository.get(id);
 
-        if (meal != null && repository.get(id).getUserId() == userId) {
+        if (meal != null && meal.getUserId() == userId) {
             return meal;
         }
         return null;
     }
 
     @Override
-    public Collection<Meal> getAll(Integer userId) {
-        return repository.values().stream().filter(meal -> meal.getUserId().equals(userId))
-                .sorted(Comparator.comparing(Meal::getDate).reversed()).collect(Collectors.toList());
+    public List<Meal> getAll(int userId) {
+        return repository.values().stream()
+                .filter(meal -> meal.getUserId().equals(userId))
+                .sorted(Comparator.comparing(Meal::getDate).thenComparing(Meal::getTime).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Meal> getFiltered(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
+        return getAll(userId).stream()
+                .filter(meal -> meal.getDate().isAfter(dateFrom.minusDays(1)) && meal.getDate().isBefore(dateTo.plusDays(1))
+                        && meal.getTime().toSecondOfDay() >= timeFrom.toSecondOfDay() && meal.getTime().toSecondOfDay() <= timeTo.toSecondOfDay()).collect(Collectors.toList());
     }
 }
 
