@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.inmemory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
@@ -21,11 +22,11 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal -> save(meal, meal.getUserId()));
+        MealsUtil.meals.forEach(meal -> save(meal.getUserId(), meal));
     }
 
     @Override
-    public Meal save(Meal meal, int userId) {
+    public Meal save(int userId, Meal meal) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.put(meal.getId(), meal);
@@ -36,7 +37,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public boolean delete(int id, int userId) {
+    public boolean delete(int userId, int id) {
         Meal meal = repository.get(id);
         if (meal != null && meal.getUserId() == userId) {
             repository.remove(id);
@@ -46,7 +47,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id, int userId) {
+    public Meal get(int userId, int id) {
         Meal meal = repository.get(id);
 
         if (meal != null && meal.getUserId() == userId) {
@@ -59,15 +60,15 @@ public class InMemoryMealRepository implements MealRepository {
     public List<Meal> getAll(int userId) {
         return repository.values().stream()
                 .filter(meal -> meal.getUserId().equals(userId))
-                .sorted(Comparator.comparing(Meal::getDate).thenComparing(Meal::getTime).reversed())
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Meal> getFiltered(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
         return getAll(userId).stream()
-                .filter(meal -> meal.getDate().isAfter(dateFrom.minusDays(1)) && meal.getDate().isBefore(dateTo.plusDays(1))
-                        && meal.getTime().toSecondOfDay() >= timeFrom.toSecondOfDay() && meal.getTime().toSecondOfDay() <= timeTo.toSecondOfDay()).collect(Collectors.toList());
+                .filter(meal -> DateTimeUtil.isBetweenHalfOpenDate(meal.getDate(), dateFrom, dateTo)
+                        && DateTimeUtil.isBetweenHalfOpenTime(meal.getTime(), timeFrom, timeTo)).collect(Collectors.toList());
     }
 }
 

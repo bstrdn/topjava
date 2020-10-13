@@ -20,15 +20,15 @@ public class MealService {
     }
 
     public Meal create(Meal meal, int userId) {
-        return repository.save(meal, userId);
+        return repository.save(userId, meal);
     }
 
     public void delete(int id, int userId) {
-        checkNotFoundWithId(repository.delete(id, userId), id);
+        checkNotFoundWithId(repository.delete(userId, id), id);
     }
 
     public Meal get(int id, int userId) {
-        return checkNotFoundWithId(repository.get(id, userId), id);
+        return checkNotFoundWithId(repository.get(userId, id), id);
     }
 
     public List<Meal> getAll(int userId) {
@@ -36,10 +36,10 @@ public class MealService {
     }
 
     public List<Meal> getFiltered(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
-        return new ArrayList<>(repository.getFiltered(userId, dateFrom, dateTo, timeFrom, timeTo));
+        return repository.getFiltered(userId, dateFrom, dateTo, timeFrom, timeTo);
     }
 
     public void update(Meal meal, int userId) {
-        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
+        checkNotFoundWithId(repository.save(userId, meal), meal.getId());
     }
 }

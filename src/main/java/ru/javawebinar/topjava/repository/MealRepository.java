@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface MealRepository {
     // null if not found, when updated
-    Meal save(Meal meal, int userId);
+    Meal save(int userId, Meal meal);
 
     // false if not found
-    boolean delete(int id, int userId);
+    boolean delete(int userId, int id);
 
     // null if not found
-    Meal get(int id, int userId);
+    Meal get(int userId, int id);
 
     List<Meal> getAll(int userId);
 
