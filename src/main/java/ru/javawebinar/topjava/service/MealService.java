@@ -38,8 +38,4 @@ public class MealService {
     public List<Meal> getFiltered(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
         return repository.getFiltered(userId, dateFrom, dateTo, timeFrom, timeTo);
     }
-
-    public void update(Meal meal, int userId) {
-        checkNotFoundWithId(repository.save(userId, meal), meal.getId());
-    }
 }

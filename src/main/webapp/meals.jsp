@@ -33,15 +33,18 @@
     <hr/>
     <h2>Meals</h2>
     <dl>
-        <form method="post" action="meals?action=filter">
-            <dt>Filter</dt>
-            <dd><input type="date" name="dateFrom" required></dd>
-            <dd><input type="date" name="dateTo" required></dd>
-            <dd><input type="time" name="timeFrom" required></dd>
-            <dd><input type="time" name="timeTo" required></dd>
-            <dd>
-                <button type="submit">Filter</button>
-            </dd>
+        <form method="get" action="meals">
+            <input type="hidden" name="action" value="filter">
+            <dl>
+                <dt>Filter</dt>
+                <dd>Date From <input type="date" name="dateFrom"></dd>
+                <dd>Date To <input type="date" name="dateTo"></dd>
+            </dl>
+            <dl>
+                <dd>Time From <input type="time" name="timeFrom"></dd>
+                <dd>Time To <input type="time" name="timeTo"></dd>
+            </dl>
+            <button type="submit">Filter</button>
         </form>
     </dl>
     <table border="1" cellpadding="8" cellspacing="0">

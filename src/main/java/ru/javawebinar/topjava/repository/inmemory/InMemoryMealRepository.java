@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,30 +18,33 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
-    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
-//    private final Map<Integer, List<Meal>> repository = new ConcurrentHashMap<>();
+    private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal -> save(meal.getUserId(), meal));
+        MealsUtil.meals1.forEach(meal -> save(1, meal));
+        MealsUtil.meals2.forEach(meal -> save(2, meal));
     }
 
     @Override
     public Meal save(int userId, Meal meal) {
+        if (!repository.containsKey(userId)) {
+            repository.put(userId, new HashMap<>());
+        }
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
+            repository.get(userId).put(meal.getId(), meal);
             return meal;
         }
         // handle case: update, but not present in storage
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(int userId, int id) {
-        Meal meal = repository.get(id);
-        if (meal != null && meal.getUserId() == userId) {
-            repository.remove(id);
+        Meal meal = repository.get(userId).get(id);
+        if (meal != null) {
+            repository.get(userId).remove(id);
             return true;
         }
         return false;
@@ -48,9 +52,8 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal get(int userId, int id) {
-        Meal meal = repository.get(id);
-
-        if (meal != null && meal.getUserId() == userId) {
+        Meal meal = repository.get(userId).get(id);
+        if (meal != null) {
             return meal;
         }
         return null;
@@ -58,8 +61,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId().equals(userId))
+        return repository.get(userId).values().stream()
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }

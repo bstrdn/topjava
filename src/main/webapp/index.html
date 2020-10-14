@@ -9,12 +9,11 @@
 <ul>
     <li><a href="users">Users</a></li>
     <form method="post" action="meals?action=setUser">
-        <input type="hidden" name="user" value="1">
-        <button type="submit">User 1</button>
-    </form>
-    <form method="post" action="meals?action=setUser">
-        <input type="hidden" name="user" value="2">
-        <button type="submit">User 2</button>
+        <select name="user">
+            <option value="1">User 1</option>
+            <option value="2">User 2</option>
+        </select>
+        <button type="submit">Login</button>
     </form>
 </ul>
 </body>

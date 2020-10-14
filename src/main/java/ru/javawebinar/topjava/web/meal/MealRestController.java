@@ -25,15 +25,6 @@ public class MealRestController {
         this.service = service;
     }
 
-    public List<Meal> getAll() {
-        log.info("getAll");
-        return service.getAll(getAuthUserId());
-    }
-
-    public List<Meal> getFiltered(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
-        return service.getFiltered(getAuthUserId(), dateFrom, dateTo, timeFrom, timeTo);
-    }
-
     public Meal get(int id) {
         log.info("get {}", id);
         return service.get(id, getAuthUserId());
@@ -55,11 +46,11 @@ public class MealRestController {
         service.delete(id, getAuthUserId());
     }
 
-    public List<MealTo> getTos() {
-        return MealsUtil.getTos(getAll(), authUserCaloriesPerDay());
+    public List<MealTo> getAll() {
+        return MealsUtil.getTos(service.getAll(getAuthUserId()), authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getFilteredTos(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
+    public List<MealTo> getFiltered(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
         return MealsUtil.getTos(service.getFiltered(getAuthUserId(), dateFrom, dateTo, timeFrom, timeTo), authUserCaloriesPerDay());
     }
 }
