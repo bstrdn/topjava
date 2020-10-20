@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS user_roles;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS meals;
+DROP TABLE IF EXISTS users;
 DROP SEQUENCE IF EXISTS global_seq;
 
 CREATE SEQUENCE global_seq START WITH 100000;
@@ -35,4 +35,3 @@ CREATE TABLE meals
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX meals_unique_user_id_and_data_time_idx ON meals (user_id, date_time);
-CREATE UNIQUE INDEX meals_unique_id_and_user_id_idx ON meals (id, user_id);
