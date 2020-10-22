@@ -15,8 +15,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.MealTestData.getNew;
 import static ru.javawebinar.topjava.MealTestData.getUpdated;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -40,7 +40,7 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(MEAL_ID, USER_ID);
-        assertEquals(meal1, meal);
+        assertMatch(meal1, meal);
     }
 
     @Test
@@ -71,22 +71,27 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive() {
-        List<Meal> expected = service.getBetweenInclusive(DATE_FROM, DATE_TO, USER_ID);
-        List<Meal> actual = Arrays.asList(meal5, meal6);
-        assertEquals(expected, actual);
+        List<Meal> expected = service.getBetweenInclusive(DATE_FROM, DATE_TO.minusDays(1), USER_ID);
+        assertMatch(Arrays.asList(meal5, meal6), expected);
     }
 
     @Test
-    public void getAll() throws Exception {
+    public void getBetweenInclusiveWithNull() {
+        List<Meal> expected = service.getBetweenInclusive(DATE_FROM, null, USER_ID);
+        assertMatch(Arrays.asList(meal1, meal2, meal5, meal6), expected);
+    }
+
+    @Test
+    public void getAll() {
         List<Meal> all = service.getAll(USER_ID);
-        assertEquals(Arrays.asList(meal2, meal1, meal6, meal5, meal3, meal4), all);
+        assertMatch(all, Arrays.asList(meal2, meal1, meal6, meal5, meal3, meal4));
     }
 
     @Test
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        assertEquals(service.get(MEAL_ID, USER_ID), updated);
+        assertMatch(service.get(MEAL_ID, USER_ID), updated);
 
     }
 
@@ -108,6 +113,6 @@ public class MealServiceTest {
         Meal create = service.create(newMeal, USER_ID);
         Integer newId = create.getId();
         newMeal.setId(newId);
-        assertEquals(service.get(newId, USER_ID), newMeal);
+        assertMatch(service.get(newId, USER_ID), newMeal);
     }
 }
