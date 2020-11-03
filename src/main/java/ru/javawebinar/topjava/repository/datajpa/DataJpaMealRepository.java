@@ -13,13 +13,12 @@ import java.util.List;
 @Repository
 public class DataJpaMealRepository implements MealRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final CrudMealRepository crudMealRepository;
+    private final CrudUserRepository crudUserRepository;
 
-    private final CrudMealRepository crudRepository;
-
-    public DataJpaMealRepository(CrudMealRepository crudRepository) {
-        this.crudRepository = crudRepository;
+    public DataJpaMealRepository(CrudMealRepository crudMealRepository, CrudUserRepository crudUserRepository) {
+        this.crudMealRepository = crudMealRepository;
+        this.crudUserRepository = crudUserRepository;
     }
 
     @Override
@@ -27,28 +26,28 @@ public class DataJpaMealRepository implements MealRepository {
         if (!meal.isNew() && get(meal.getId(), userId) == null) {
             return null;
         }
-        meal.setUser(em.getReference(User.class, userId));
-        return crudRepository.save(meal);
+        meal.setUser(crudUserRepository.getOne(userId));
+        return crudMealRepository.save(meal);
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        return crudRepository.delete(id, userId) != 0;
+        return crudMealRepository.delete(id, userId) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = em.find(Meal.class, id);
+        Meal meal = crudMealRepository.findById(id).orElse(null);
         return meal != null && meal.getUser().getId() == userId ? meal : null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudRepository.findAll(userId);
+        return crudMealRepository.findAll(userId);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return crudRepository.getBetweenHalfOpen(startDateTime, endDateTime, userId);
+        return crudMealRepository.getBetweenHalfOpen(startDateTime, endDateTime, userId);
     }
 }
