@@ -11,8 +11,10 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @Repository
 public class JdbcUserRepository implements UserRepository {
 

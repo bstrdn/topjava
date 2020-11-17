@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
@@ -14,13 +15,15 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
+
+    @Autowired
+    Environment environment;
 
     @Autowired
     protected UserService service;
@@ -34,9 +37,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Before
     public void setUp() {
         cacheManager.getCache("users").clear();
-        if (!Objects.isNull(jpaUtil)) {
+        if (checkJpaDatajpa()) {
             jpaUtil.clear2ndLevelHibernateCache();
         }
+    }
+
+    public boolean checkJpaDatajpa() {
+        return environment.acceptsProfiles("jpa", "datajpa");
     }
 
     @Test
