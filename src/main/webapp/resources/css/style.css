@@ -10,6 +10,10 @@ tr[data-mealExcess="true"] {
     color: red;
 }
 
+.mealExcessFalse {
+    color: green;
+}
+
 .fa {
     cursor: pointer;
 }
